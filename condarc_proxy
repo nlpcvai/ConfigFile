@@ -1,0 +1,9 @@
+channels:
+  - defaults
+show_channel_urls: true
+auto_activate_base: false
+
+proxy_servers:
+    http: http://127.0.0.1:3213
+    https: https://127.0.0.1:3213
+remote_read_timeout_secs: 1000.0
