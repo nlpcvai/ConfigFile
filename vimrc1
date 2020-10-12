@@ -1,0 +1,505 @@
+"#########################################################################
+"# File Name: /home/mbinary/.vimrc
+"# Author: mbinary
+"# Mail: zhuheqin1@gmail.com
+"# Blog: https://mbinary.xyz
+"# Created Time: 2018-05-01  10:21
+"#########################################################################
+
+" toc
+" - plugin
+" - plugin setting
+" - key mapping
+" - autocmd
+" - general setting
+
+"colorscheme  vibrantink
+"colorscheme  herald
+colorscheme  SolarizedDark
+
+
+"************** plugins **********
+call plug#begin('~/.vim/bundle')
+
+"for edit
+Plug 'tpope/vim-surround'   "c/y/d s ] '   ( )  cst  ysiw
+Plug 'tpope/vim-commentary' "gcc gcap gc
+
+"for vim
+Plug 'scrooloose/nerdtree'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'vim-airline/vim-airline'
+Plug 'liuchengxu/vim-which-key'
+"Plug 'wakatime/vim-wakatime'
+
+"for search
+Plug 'vim-scripts/ag.vim'  " :Ag ...
+Plug 'kien/ctrlp.vim'  " ctrl+p
+
+"snippet
+Plug 'honza/vim-snippets'  "source
+Plug 'SirVer/ultisnips'    "engine
+
+"for formatting
+Plug 'Yggdroot/indentLine' " indent line display
+Plug 'hotoo/pangu.vim'
+Plug 'Chiel92/vim-autoformat'
+Plug 'neoclide/coc.nvim',{'branch':'release'}
+
+" for c
+"Plug 'Valloric/YouCompleteMe'
+
+" for md
+Plug 'mzlogin/vim-markdown-toc'
+
+" for py
+"Plug 'w0rp/ale'
+Plug 'tmhedberg/SimpylFold'
+Plug 'vim-scripts/indentpython' " indenting according to pep8
+
+" for git
+"Plug 'tpope/vim-fugitive'
+
+call plug#end()
+
+
+"************** plugins setting **********
+"for vim-which-key
+nnoremap <silent><leader> :WhichKey '<leader>'  <cr>
+nnoremap <silent>;  :WhichKey ';' <cr>
+
+"for simpylfold
+let g:SimpylFold_docstring_preview=1
+"for snippet
+let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+
+
+"for autoformat
+"autoform c,java,c++
+let g:formatdef_cf='"astyle --style=kr  --indent-switches --delete-empty-lines  -p -U -H -f --lineend=linux"'
+let g:formatters_c = ['cf']
+let g:formatters_cc = ['cf']
+let g:formatters_cpp = ['cf']
+let g:formatters_java = ['cf']
+
+"py
+let g:formater_autopep8="autopep8"
+let g:formatters_python = ['autopep8']
+
+noremap ;f :w<cr>:Autoformat<CR>
+"upon saving the file
+"au BufWrite * : Autoformat
+
+"for markdown
+imap ;toc <Esc>:GenTocGFM<CR>
+imap ;tab <Esc>:GenTocMarked<CR>
+imap ;mdp <Esc><Plug>MarkdownPreviewToggle
+
+
+"for indentline
+let g:indentLine_color_term = 239
+"let g:indentLine_char = '¦'
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
+
+"pangu
+"autocmd BufWritePre *.md,*.text,*.wiki,*.cnx,*.txt call PanGuSpacing()
+
+"批量处理
+"vim  a.md b.md
+":argdo Pangu | update
+":wq
+
+
+"for nerdtree
+map <C-n> :NERDTreeToggle<CR>
+let NERDTreeShowHidden=1
+let NERDTreeIgore=['\.pyc','\~$','\.swp','__pycache__']
+let g:NERDTreeShowIgnoredStatus = 1
+let g:nerdtree_tabs_open_on_console_startup=0
+let g:NERDTreeIndicatorMapCustom = {
+    \ "Modified"  : "*",
+    \ "Staged"    : "+",
+    \ "Untracked" : "^",
+    \ "Renamed"   : "->",
+    \ "Unmerged"  : "=",
+    \ "Deleted"   : "x",
+    \ 'Ignored'   : 'o',
+    \ "Unknown"   : "?"
+    \ }
+"Dirty"     : "/",
+"Clean"     : "x",
+
+"for ale   code highlight and fixer
+let g:ale_linters = {
+\    'javascript': ['eslint'],
+\    'css': ['stylelint'],
+\    'python':['flake8'], 
+\    'c': ['clang'],
+\    'c++': ['clang'],
+\}
+let g:ale_fix_on_save = 0
+
+let g:ale_fixers={
+            \ '*':['remove_trailing_lines', 'trim_whitespace'],
+            \ 'python':['autopep8'],
+            \ 'c':['uncrustify'],
+            \ 'c++':['uncrustify'],
+            \}
+
+let g:ale_warn_about_trailing_whitespace = 0
+
+let g:ale_echo_cursor=1
+
+let g:ale_sign_column_always = 1
+let g:ale_sign_error ='x' "'●'
+let g:ale_sign_warning ='!' "'▶'
+let g:ale_statusline_format = ['x %d', '! %d', '^_^ OK']
+let g:ale_linters_explicit = 1
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:airline#extensions#ale#enabled = 1
+
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+let g:ale_c_cppcheck_options = '--enable=all'
+let g:ale_cpp_cppcheck_options = '--enable=all'
+
+nmap gp <Plug>(ale_previous_wrap)
+nmap gn <Plug>(ale_next_wrap)
+nmap ;a :ALEToggle<CR>
+nmap ;d :ALEDetail<CR>
+"nmap ;f <Plug>(ale_fix)
+
+" for coc
+" if hidden is not set, TextEdit might fail.
+set hidden
+" Some servers have issues with backup files, see #649
+set nobackup
+set nowritebackup
+" Better display for messages
+set cmdheight=2
+" You will have bad experience for diagnostic messages when it's default 4000.
+set updatetime=300
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+"set signcolumn=yes
+
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap for do codeAction of current line
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Create mappings for function text object, requires document symbols feature of languageserver.
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
+
+" Use <TAB> for select selections ranges, needs server support, like: coc-tsserver, coc-python
+nmap <silent> <TAB> <Plug>(coc-range-select)
+xmap <silent> <TAB> <Plug>(coc-range-select)
+
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+
+" use `:OR` for organize import of current buffer
+command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add status line support, for integration with other plugin, checkout `:h coc-status`
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" " Using CocList
+" " Show all diagnostics
+" nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+" " Manage extensions
+" nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+" " Show commands
+" nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+" " Find symbol of current document
+" nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+" " Search workspace symbols
+" nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+" " Do default action for next item.
+" nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+" " Do default action for previous item.
+" nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+" " Resume latest coc list
+" nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+
+
+" call coc#config('coc.preferences', {
+" 	\ 'timeout': 1000,
+" 	\})
+" call coc#config('languageserver', {
+" 	\ 'ccls': {
+" 	\   "command": "ccls",
+" 	\   "trace.server": "verbose",
+" 	\   "filetypes": ["c", "cpp", "objc", "objcpp"]
+" 	\ }
+" 	\})
+
+
+"************key mapping **********
+noremap tt o<esc>
+nmap ff <C-f>
+vmap ff <c-f>
+nmap bb <c-b>
+vmap bb <c-b>
+
+nmap  ;; <Esc>
+map! ;; <Esc>l
+
+"select all
+map <C-A> ggVG
+map! <C-A>  ggVG
+
+" switch split window  key map
+noremap <C-J> <C-W><C-J>
+noremap <C-K> <C-W><C-K>
+noremap <C-L> <C-W><C-L>
+noremap <C-H> <C-W><C-H>
+
+"write  and     quit
+map  ;w :w!<cr>
+map! ;w <Esc>:w!<cr>i
+map  ;q  :wq<cr>
+map! ;q  <esc>:wq<cr>
+"go to line end
+inoremap ;' <Esc>$a 
+vmap ;y : !/mnt/c/Windows/System32/clip.exe<cr>u''
+imap ;y <esc>V;y
+map ;p :read !/mnt/c/Windows/System32/paste.exe<cr>
+map! ;p <esc>:read !/mnt/c/Windows/System32/paste.exe<cr>
+"Quickly Run
+map ;r :call CompileRunGcc()<CR>
+map! ;r <esc>:call CompileRunGcc()<CR>
+func! CompileRunGcc()
+    exec "w"
+    if &filetype == 'c'
+        exec "!g++ % -o %<  && time ./%<"
+    elseif &filetype == 'cpp'
+        exec "!g++ % -o %<  && time ./%<"
+    elseif &filetype == 'java'
+        exec "!javac % && time java %<"
+    elseif &filetype == 'sh'
+        :!time bash %
+    elseif &filetype == 'python'
+        exec "!time python3 %"
+    elseif &filetype == 'html'
+        exec "!firefox % &"
+    elseif &filetype == 'mkd'
+        exec "!~/.vim/markdown.pl % > %.html &"
+        exec "!firefox %.html &"
+    endif
+endfunc
+
+"auto  complete brackets
+"inoremap ( ()<Esc>i
+"inoremap [ []<Esc>i
+"inoremap { {}<Esc>i
+
+
+"hot string
+
+imap ;[  『』<esc>i
+imap ;tm  <C-R>=strftime("%F  %H:%M")<cr>
+imap ;gm zhuheqin1@gmail.com
+imap ;um zhuheqin@mail.ustc.edu.cn
+imap ;mb https://mbinary.xyz
+imap ;gt https://github.com/mbinary
+imap ;qq 414313516
+imap ;dt /mnt/c/Users/mbinary/Desktop
+imap ;tc  <cr>.....................OOOOO......................<cr>...............OOOOOOOOOOOOOO..O................<cr>............OOOOOOOOOOOOOOOOOOO...O.............<cr>..........OOOOOOOOOOOOOOOOOOOOOOO...............<cr>........OOOOOOOOOOOOOOOOOOOOOOOOOO..............<cr>.......OOOOOOOOOOOOOOOOOOOOOOOOOOO......O.......<cr>......OOOOOOOOOOOOOOOO....OOOOOOOOO......O......<cr>.....OOOOOOOOOOOOOOOO......OOOOOOOO.......O.....<cr>....OOOOOOOOOOOOOOOOO......OOOOOOOO........O....<cr>...OOOOOOOOOOOOOOOOOO.....OOOOOOOOO.............<cr>..OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO.............<cr>..OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO...........O..<cr>..OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO...............<cr>.OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO................<cr>.OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO.................<cr>.OOOOOOOOOOOOOOOOOOOOOOOOOOO..................O.<cr>.OOOOOOOOOOOOOOOOOOO..........................O.<cr>.OOOOOOOOOOOOOOOOO..............................<cr>.OOOOOOOOOOOOOOO................................<cr>..OOOOOOOOOOOOO.................................<cr>..OOOOOOOOOOOO...............................O..<cr>...OOOOOOOOOO..........O........................<cr>...OOOOOOOOOO........OOOOO......................<cr>....OOOOOOOOO........OOOOOO................O....<cr>.....OOOOOOOO........OOOOOO...............O.....<cr>......OOOOOOO.........OOOO...............O......<cr>.......OOOOOOO..........................O.......<cr>.........OOOOO..................................<cr>..........OOOOO.................................<cr>.............OOOO.................O.............<cr>................OOO............O................<cr>.......................OO.......................<cr>
+
+" yinyang
+imap ;tc2   <f12>/*<cr>                     *****<cr>               **************  *<cr>            *******************   *<cr>          ***********************   *<cr>        **************************    *<cr>       ***************************      *<cr>      ****************    *********      *<cr>     ****************      ********       *<cr>    *****************      ********        *<cr>   ******************     *********        *<cr>  *********************************   <cr>  ********************************           *<cr>  *******************************<cr> *******************************              *<cr> ******************************<cr> ***************************                  *<cr> *******************                          *<cr> *****************<cr> ***************                              *<cr>  *************<cr>  ************                               *<cr>   **********          *                    <cr>   **********        *****                  *<cr>    *********        ******                *<cr>     ********        ******               *<cr>      *******         ****               *<cr>       *******                          *<cr>         *****                        *<cr>          *****                     *<cr>             ****                 *<cr>                ***            *<cr>                      * **<cr>*/<cr><ESC>:set nopaste<c-r><f12><cr>
+" info about me
+imap ;hd  <Esc>ggO#coding: utf-8<cr>''' mbinary<cr>#######################################################################<CR># File : <C-R>=expand("%")<CR><CR># Author: mbinary<CR># Mail: zhuheqin1@gmail.com<CR># Blog: https://mbinary.xyz<CR># Github: https://github.com/mbinary<cr># Created Time: <C-R>=strftime("%F  %H:%M")<CR><CR># Description: <cr>#######################################################################<cr>'''
+
+imap ;mt ---<cr>title: 『』<cr>date: <C-R>=strftime("%F  %H:%M")<CR><cr>categories: <cr>tags: []<cr>keywords:  <cr>mathjax: false<cr>description: <cr>---<cr><esc>8k$i
+
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap ;du <C-G>u<C-U>
+inoremap ;dd <C-G>u<C-D>
+
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+if !exists(":DiffOrig")
+	  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+		  \ | wincmd p | diffthis
+endif
+
+"tab switch
+noremap <silent><leader>n :tabnext<CR>
+noremap <silent><leader>p :tabp<cr>
+noremap <silent><leader>t :tabnew<cr>
+noremap <silent><leader>c :tabclose<cr>
+noremap <silent><leader>1 :tabn 1<cr>
+noremap <silent><leader>2 :tabn 2<cr>
+noremap <silent><leader>3 :tabn 3<cr>
+noremap <silent><leader>4 :tabn 4<cr>
+noremap <silent><leader>5 :tabn 5<cr>
+noremap <silent><leader>6 :tabn 6<cr>
+noremap <silent><leader>7 :tabn 7<cr>
+noremap <silent><leader>8 :tabn 8<cr>
+noremap <silent><leader>9 :tabn 9<cr>
+noremap <silent><leader>0 :tabn 10<cr>
+inoremap <silent><s-tab> <ESC>:tabnext<CR>
+
+
+
+"color asmanian2 " background theme
+autocmd InsertLeave * se nocul
+"note that func name must starts with capital or 's:'
+
+"Set to auto read when a file is changed from the outside
+if exists("&autoread")
+	set autoread
+endif
+
+"新建文件后，自动定位到文件末尾
+autocmd BufNewFile * normal G
+"打开文件跳转到关闭时的光标位置
+au BufReadPost * exe "normal! g`\""
+autocmd BufNewFile README.md 0 read ~/myshell/mytemplate/README.tpl
+autocmd BufNewFile PB16030899* 0 read ~/myshell/mytemplate/report-tex.tpl
+autocmd BufNewFile .travis.yml 0 read ~/myshell/mytemplate/travis.tpl
+autocmd BufNewFile tests.py 0 read ~/myshell/mytemplate/unittest.py
+autocmd BufNewFile testall.py 0 read ~/myshell/mytemplate/multitest.py
+
+"autocmd  events
+"BUfNewFile  BufReadPre  BufRead  BufReadCmd  BufFilePre  BufFilePost
+"Systax  StdinReadPre  BufWrite CursorHold  BufEnter  BufLeave
+"BufWinEnter (window) WinEnter/Leave  CmdwinEnter  VimEnter/
+"
+
+"************ general setting *****
+"set mouse=a|v
+set mouse=a
+set clipboard^=unnamed,unnamedplus
+set langnoremap
+set nocompatible
+set backspace=indent,eol,start
+set nobackup
+set history=50		" keep 50 lines of command line history
+set ruler		" show the cursor position all the timeset showcmd		" display incomplete commands
+set incsearch		" do incremental searching
+set timeoutlen=500
+set so=10  "move 10 line when moving vertically
+set tabstop=4 "width of tab
+set expandtab
+set wildmenu
+set magic      " for regex
+set softtabstop=4
+set shiftwidth=4
+set autoindent
+set cindent
+set smartindent
+set showmatch
+set ignorecase
+set hls
+set hlsearch
+set pastetoggle=<f12>
+
+"line number
+set nu
+set relativenumber
+
+syntax on
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+
+
+"cropse code
+set foldenable
+"autocmd  FileType c,c++,java,python  setlocal foldmethod=syntax
+set foldmethod=indent
+set foldlevel=99
+nnoremap <space> za
+
+"for commentary
+autocmd FileType json setlocal commentstring=\/\/%s
+autocmd FileType markdown setlocal commentstring=[^_^]:\ #\ (%s)
